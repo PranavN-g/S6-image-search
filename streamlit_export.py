@@ -19,14 +19,19 @@ import tempfile
 from google.oauth2 import service_account
 from vertexai import init
 
-
 # 1. Extract from Streamlit secrets
 project_id = st.secrets["general"]["project"]
 LOCATION = "us-central1"
-adc_info = st.secrets["google_credentials"]
-json_str = json.dumps(adc_info)
+adc_dict = dict(st.secrets["google_credentials"])  # Convert TOML to dict
+
+# 2. Write to a temporary JSON file
+with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as tmp:
+    json.dump(adc_dict, tmp)
+    tmp.flush()
+    adc_json_path = tmp.name
+
 # 3. Load credentials from the temp JSON file
-creds = service_account.Credentials.from_service_account_file(json_str)
+creds = service_account.Credentials.from_service_account_file(adc_json_path)
 
 # 4. Init Vertex AI
 init(project=project_id, location=LOCATION, credentials=creds)
