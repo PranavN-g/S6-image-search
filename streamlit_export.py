@@ -23,7 +23,7 @@ from vertexai import init
 # 1. Extract from Streamlit secrets
 project_id = st.secrets["general"]["project"]
 LOCATION = "us-central1"
-adc_info = toml.load(st.secrets["google_credentials"])
+adc_info = st.secrets["google_credentials"]
 json_str = json.dumps(adc_info)
 # 3. Load credentials from the temp JSON file
 creds = service_account.Credentials.from_service_account_file(json_str)
