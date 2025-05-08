@@ -1,0 +1,9 @@
+streamlit
+faiss-cpu
+vertexai
+google-cloud-aiplatform
+google-auth
+requests
+numpy
+pillow
+
