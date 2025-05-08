@@ -12,11 +12,11 @@ from vertexai import init
 from vertexai.vision_models import MultiModalEmbeddingModel
 
 # 1) GCP & Vertex AI setup via Streamlit Secrets
-creds_info = json.loads(os.environ["GOOGLE_APPLICATION_CREDENTIALS_JSON"])
-creds = service_account.Credentials.from_service_account_info(creds_info)
-PROJECT = creds_info["project_id"]
+project_id = st.secrets["general"]["project"]
+adc_json_path = st.secrets["google_credentials"]["adc_json_path"]
+creds = service_account.Credentials.from_service_account_file(adc_json_path)
 LOCATION = "us-central1"
-init(project=PROJECT, location=LOCATION, credentials=creds)
+init(project=project_id, location=LOCATION, credentials=creds)
 
 # 2) Load Vertex AI model
 try:
