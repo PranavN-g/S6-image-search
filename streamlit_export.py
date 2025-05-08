@@ -1,5 +1,6 @@
 # app.py
 import os
+import toml
 import json
 import requests
 import faiss
@@ -18,19 +19,14 @@ import tempfile
 from google.oauth2 import service_account
 from vertexai import init
 
+
 # 1. Extract from Streamlit secrets
 project_id = st.secrets["general"]["project"]
 LOCATION = "us-central1"
-adc_dict = dict(st.secrets["google_credentials"])  # Convert TOML to dict
-
-# 2. Write to a temporary JSON file
-with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as tmp:
-    json.dump(adc_dict, tmp)
-    tmp.flush()
-    adc_json_path = tmp.name
-
+adc_info = toml.load(st.secrets["google_credentials"])
+json_str = json.dumps(adc_info)
 # 3. Load credentials from the temp JSON file
-creds = service_account.Credentials.from_service_account_file(adc_json_path)
+creds = service_account.Credentials.from_service_account_file(json_str)
 
 # 4. Init Vertex AI
 init(project=project_id, location=LOCATION, credentials=creds)
@@ -52,8 +48,8 @@ with open(META_PATH, "r") as f:
     metadata = json.load(f)  # list of [SKU_ID, URL]
 
 # 4) Streamlit UI
-st.set_page_config(page_title="🔍 Multimodal Search", layout="wide")
-st.title("🔍 Click-and-Search")
+st.set_page_config(page_title="🔍 Multimodal Search")
+st.title("S6 Search term based image search")
 
 query = st.text_input("Enter search text:")
 if query:
